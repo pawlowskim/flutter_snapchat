@@ -16,12 +16,20 @@ public class SwiftSnapchatFlutterPlugin: NSObject, FlutterPlugin {
             result("iOS " + UIDevice.current.systemVersion)
         }else if call.method.elementsEqual("snap_chat_login"){
             self.openSnapChat(result: result)
+        }else if call.method.elementsEqual("get_access_token"){
+        	self.getAccessToken(result: result)
         }else if call.method.elementsEqual("snap_chat_logout"){
             self.logout()
             result("logout")
         }else{
             result(FlutterMethodNotImplemented)
         }
+    }
+
+    func getAccessToken(result: @escaping FlutterResult) {
+    	var hashKey = [String:Any]()
+    	hashKey["token"] = SCSDKLoginClient.getAccessToken()
+        result(hashKey);
     }
    
    func openSnapChat(result: @escaping FlutterResult){

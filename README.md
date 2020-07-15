@@ -11,9 +11,7 @@ Step 1
 
 Step 2 
 
-**For Android**
- 
-        Make some changes in android manifest and other like
+**Android**
 
 In android manifest 
 
@@ -48,7 +46,6 @@ In android manifest
     </activity>
 
 
-
 App gradle inside dependencies
 
 
@@ -80,15 +77,13 @@ Values folder make an array.xml and paste below
 
 Step 3 
 
-**For iOS**
+**iOS**
  
      Requirements
         •	Client ID from the developer portal
         •	iOS version 10.1+
-
- Make changes in your info plist
  
- In AppDelegate please add 
+ Add to AppDelegate: 
  
     override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         return SCSDKLoginClient.application(app, open: url, options: options)

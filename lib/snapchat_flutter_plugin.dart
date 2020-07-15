@@ -20,4 +20,9 @@ class SnapchatFlutterPlugin {
   static Future<String> get snapchatLogout async {
     return await _channel.invokeMethod('snap_chat_logout');
   }
+
+  static Future<Map<dynamic, dynamic>> get getAccessToken async {
+    final Map<dynamic, dynamic> result = await _channel.invokeMethod('get_access_token');
+    return (result.cast<String, dynamic>());
+  }
 }

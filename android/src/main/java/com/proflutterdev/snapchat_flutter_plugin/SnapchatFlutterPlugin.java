@@ -46,6 +46,9 @@ public class SnapchatFlutterPlugin implements MethodCallHandler,
             SnapLogin.getLoginStateController(_activity).addOnLoginStateChangedListener(this);
             SnapLogin.getAuthTokenManager(_activity).startTokenGrant();
             this._result = result;
+        } else if (call.method.equals("get_access_token")) {
+            this._result = result;
+            getAccessToken();
         } else if (call.method.equals("snap_chat_logout")) {
             SnapLogin.getLoginStateController(_activity).removeOnLoginStateChangedListener(this);
             SnapLogin.getAuthTokenManager(_activity).revokeToken();
@@ -53,6 +56,13 @@ public class SnapchatFlutterPlugin implements MethodCallHandler,
         } else {
             result.notImplemented();
         }
+    }
+
+    private void getAccessToken() {
+        String accToken = SnapLogin.getAccessToken();
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("token", accToken);
+        _result.success(data);
     }
 
     public void fetchUserData() {

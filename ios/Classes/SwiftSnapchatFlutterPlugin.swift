@@ -51,7 +51,7 @@ public class SwiftSnapchatFlutterPlugin: NSObject, FlutterPlugin {
 }
     
     private func fetchSnapUserInfo(result:@escaping FlutterResult){
-        let graphQLQuery = "{me{displayName, bitmoji{avatar}, externalId}},"
+        let graphQLQuery = "{me{displayName, externalId}},"
         SCSDKLoginClient
             .fetchUserData(
                 withQuery: graphQLQuery,
@@ -66,11 +66,11 @@ public class SwiftSnapchatFlutterPlugin: NSObject, FlutterPlugin {
                                 if let me_data = data["me"] as? [String:Any]{
                                     hashKey["fullName"] = me_data["displayName"]
                                     hashKey["_id"] = me_data["externalId"]
-                                    if let bitmoji_Data = me_data["bitmoji"] as? [String:Any]{
-                                        if let avatar = bitmoji_Data["avatar"]{
-                                            hashKey["avatar"] = avatar
-                                        }
-                                    }
+                                    //if let bitmoji_Data = me_data["bitmoji"] as? [String:Any]{
+                                    //    if let avatar = bitmoji_Data["avatar"]{
+                                    //        hashKey["avatar"] = avatar
+                                    //    }
+                                    //}
                                 }
                             }
                             result(hashKey)
@@ -93,7 +93,7 @@ public class SwiftSnapchatFlutterPlugin: NSObject, FlutterPlugin {
 
 struct UserEntity {
     let displayName: String?
-    let avatar: String?
+    //let avatar: String?
     let id: String?
     
     private enum CodingKeys: String, CodingKey {
@@ -106,13 +106,13 @@ struct UserEntity {
     
     private enum MeKeys: String, CodingKey {
         case displayName
-        case bitmoji
+        //case bitmoji
         case id
     }
     
-    private enum BitmojiKeys: String, CodingKey {
-        case avatar
-    }
+    //private enum BitmojiKeys: String, CodingKey {
+    //    case avatar
+    //}
 }
 
 extension UserEntity: Decodable {
@@ -124,7 +124,7 @@ extension UserEntity: Decodable {
         
         displayName = try? me.decode(String.self, forKey: .displayName)
         id = try? me.decode(String.self, forKey: .id)
-        let bitmoji = try me.nestedContainer(keyedBy: BitmojiKeys.self, forKey: .bitmoji)
-        avatar = try? bitmoji.decode(String.self, forKey: .avatar)
+        //let bitmoji = try me.nestedContainer(keyedBy: BitmojiKeys.self, forKey: .bitmoji)
+        //avatar = try? bitmoji.decode(String.self, forKey: .avatar)
     }
 }

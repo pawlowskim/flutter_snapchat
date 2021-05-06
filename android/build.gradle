@@ -2,44 +2,44 @@ group 'com.proflutterdev.snapchat_flutter_plugin'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    repositories {
-        google()
-        jcenter()
-    }
+	repositories {
+		google()
+		jcenter()
+	}
 
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
-    }
+	dependencies {
+		classpath 'com.android.tools.build:gradle:3.2.1'
+	}
 }
 
 rootProject.allprojects {
-    repositories {
-        google()
-        jcenter()
-        maven {
-            url "https://raw.githubusercontent.com/Snap-Kit/release-maven/repo"
-        }
-    }
+	repositories {
+		google()
+		jcenter()
+		maven {
+			url "https://storage.googleapis.com/snap-kit-build/maven"
+		}
+	}
 }
 
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
+	compileSdkVersion 28
 
-    defaultConfig {
-        minSdkVersion 21
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-    lintOptions {
-        disable 'InvalidPackage'
-    }
+	defaultConfig {
+		minSdkVersion 21
+		testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+	}
+	lintOptions {
+		disable 'InvalidPackage'
+	}
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation([
-            'com.snapchat.kit.sdk:login:1.1.4',
-            'com.snapchat.kit.sdk:core:1.1.4'
+            'com.snapchat.kit.sdk:login:1.8.0',
+            'com.snapchat.kit.sdk:core:1.8.0'
     ])
 }

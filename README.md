@@ -19,6 +19,7 @@ In android manifest
         <meta-data
             android:name="com.snapchat.kit.sdk.clientId"
             android:value=“your client id” />
+        <!-- Redirect URL is taken from snapkit developer portal under "Version link", not in setup tab -->
         <meta-data
             android:name="com.snapchat.kit.sdk.redirectUrl"
             android:value=“your redirect url“ />
@@ -36,11 +37,12 @@ In android manifest
         <category android:name="android.intent.category.DEFAULT" />
         
         <category android:name="android.intent.category.BROWSABLE" />
-
+        <!-- Redirect URL is taken from snapkit developer portal under "Version link", not in setup tab -->
+        <!-- fe. snapChat://snap-chat/oauth2 -->
         <data
-            android:host=“your host from redirect url” //sanp-chat
-            android:path=“your path“ // /oauth2
-            android:scheme=“your scheme” /> //snapChat
+            android:host=“snap-chat” 
+            android:path=“/oauth2“
+            android:scheme=“snapChat” />
     </intent-filter>
 
     </activity>
@@ -50,8 +52,8 @@ App gradle inside dependencies
 
 
         implementation([
-        'com.snapchat.kit.sdk:login:1.1.4',
-        'com.snapchat.kit.sdk:core:1.1.4'
+                'com.snapchat.kit.sdk:login:1.8',
+                'com.snapchat.kit.sdk:core:1.8'
         ])
 
 Build gradle inside all projects

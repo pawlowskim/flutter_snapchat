@@ -1,44 +1,58 @@
 PODS:
   - Flutter (1.0.0)
-  - PINCache (2.3)
-  - PINOperation (1.1.1)
+  - PINCache (3.0.3):
+    - PINCache/Arc-exception-safe (= 3.0.3)
+    - PINCache/Core (= 3.0.3)
+  - PINCache/Arc-exception-safe (3.0.3):
+    - PINCache/Core
+  - PINCache/Core (3.0.3):
+    - PINOperation (~> 1.2.1)
+  - PINOperation (1.2.1)
   - snapchat_flutter_plugin (0.0.1):
     - Flutter
     - SnapSDK
-  - SnapSDK (1.3.1):
-    - SnapSDK/SCSDKBitmojiKit (= 1.3.1)
-    - SnapSDK/SCSDKCreativeKit (= 1.3.1)
-    - SnapSDK/SCSDKLoginKit (= 1.3.1)
-  - SnapSDK/SCSDKBitmojiKit (1.3.1):
+  - SnapSDK (1.9.0):
+    - SnapSDK/SCSDKBitmojiKit (= 1.9.0)
+    - SnapSDK/SCSDKCoreKit (= 1.9.0)
+    - SnapSDK/SCSDKCreativeKit (= 1.9.0)
+    - SnapSDK/SCSDKLoginKit (= 1.9.0)
+    - SnapSDK/SCSDKStoryKit (= 1.9.0)
+  - SnapSDK/SCSDKBitmojiKit (1.9.0):
     - PINCache (< 3.1, >= 2.3)
-    - PINOperation (~> 1.1)
-  - SnapSDK/SCSDKCreativeKit (1.3.1)
-  - SnapSDK/SCSDKLoginKit (1.3.1)
+    - PINOperation (~> 1.2.1)
+    - SnapSDK/SCSDKCoreKit
+  - SnapSDK/SCSDKCoreKit (1.9.0)
+  - SnapSDK/SCSDKCreativeKit (1.9.0):
+    - SnapSDK/SCSDKCoreKit
+  - SnapSDK/SCSDKLoginKit (1.9.0):
+    - SnapSDK/SCSDKCoreKit
+  - SnapSDK/SCSDKStoryKit (1.9.0):
+    - SnapSDK/SCSDKCoreKit
 
 DEPENDENCIES:
-  - Flutter (from `.symlinks/flutter/ios`)
+  - Flutter (from `Flutter`)
   - snapchat_flutter_plugin (from `.symlinks/plugins/snapchat_flutter_plugin/ios`)
   - SnapSDK
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - PINCache
     - PINOperation
     - SnapSDK
 
 EXTERNAL SOURCES:
   Flutter:
-    :path: ".symlinks/flutter/ios"
+    :path: Flutter
   snapchat_flutter_plugin:
     :path: ".symlinks/plugins/snapchat_flutter_plugin/ios"
 
 SPEC CHECKSUMS:
-  Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
-  PINCache: ce36ed282031b92fc7733ffe831f474ff80fddc2
-  PINOperation: a6219e6fc9db9c269eb7a7b871ac193bcf400aac
-  snapchat_flutter_plugin: ef93610677aeab11e77c3ba1f8f8bc8d90a5ecd6
-  SnapSDK: be510aaabbfa7ab0142b53770f2e79c6c6b363e6
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086
+  PINOperation: 00c935935f1e8cf0d1e2d6b542e75b88fc3e5e20
+  snapchat_flutter_plugin: d6e68cc5032c234cc74feef33c439985cb8c83df
+  SnapSDK: ac7836cec8c3a380cff4646a1177ea1d753cfb8c
 
-PODFILE CHECKSUM: 58c641d85bf158aabb9882e8b57da3397d6c8dbc
+PODFILE CHECKSUM: d2c7fb1d424b5b8613963eee84a44457d25b0936
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.10.0

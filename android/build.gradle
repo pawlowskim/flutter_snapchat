@@ -4,32 +4,32 @@ version '1.0-SNAPSHOT'
 buildscript {
 	repositories {
 		google()
-		jcenter()
+		mavenCentral()
 	}
 
 	dependencies {
-		classpath 'com.android.tools.build:gradle:3.2.1'
+		classpath 'com.android.tools.build:gradle:7.0.4'
 	}
 }
 
 rootProject.allprojects {
 	repositories {
 		google()
-		jcenter()
-		maven {
-			url "https://storage.googleapis.com/snap-kit-build/maven"
-		}
+		mavenCentral()
 	}
 }
 
 apply plugin: 'com.android.library'
 
 android {
-	compileSdkVersion 28
+	compileSdkVersion 33
 
 	defaultConfig {
 		minSdkVersion 21
 		testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+		ndk {
+			abiFilters 'armeabi-v7a', 'arm64-v8a'
+		}
 	}
 	lintOptions {
 		disable 'InvalidPackage'
@@ -39,7 +39,6 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation([
-            'com.snapchat.kit.sdk:login:1.8.0',
-            'com.snapchat.kit.sdk:core:1.8.0'
+            'com.snap.loginkit:loginkit:2.1.0',
     ])
 }

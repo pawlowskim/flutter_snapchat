@@ -6,11 +6,18 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.snapchat.kit.sdk.core.controller.LoginStateController;
-import com.snapchat.kit.sdk.SnapLogin;
-import com.snapchat.kit.sdk.login.models.MeData;
-import com.snapchat.kit.sdk.login.models.UserDataResponse;
-import com.snapchat.kit.sdk.login.networking.FetchUserDataCallback;
+import com.snap.loginkit.AccessTokenResultCallback;
+import com.snap.loginkit.LoginStateCallback;
+import com.snap.loginkit.LoginResultCallback;
+import com.snap.loginkit.SnapLogin;
+import com.snap.loginkit.SnapLoginProvider;
+import com.snap.loginkit.UserDataQuery;
+import com.snap.loginkit.UserDataResultCallback;
+import com.snap.loginkit.exceptions.AccessTokenException;
+import com.snap.loginkit.exceptions.LoginException;
+import com.snap.loginkit.exceptions.UserDataException;
+import com.snap.loginkit.models.MeData;
+import com.snap.loginkit.models.UserDataResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,22 +33,27 @@ import io.flutter.plugin.common.MethodChannel.Result;
  * SnapchatFlutterPlugin
  */
 public class SnapchatFlutterPlugin implements FlutterPlugin, MethodCallHandler,
-		LoginStateController.OnLoginStateChangedListener {
+		LoginStateCallback {
 	private static final String CHANNEL = "snapchat_flutter_plugin";
 	private Context _context;
 	private MethodChannel.Result _result;
 	private MethodChannel channel;
+
+	private SnapLogin _snapLogin;
 
 	@Override
 	public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
 		channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), CHANNEL);
 		channel.setMethodCallHandler(this);
 		_context = flutterPluginBinding.getApplicationContext();
+		_snapLogin = SnapLoginProvider.get(_context);
+		_snapLogin.addLoginStateCallback(this);
 	}
 
 	@Override
 	public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
 		channel.setMethodCallHandler(null);
+		_snapLogin = null;
 	}
 
 	@Override
@@ -52,75 +64,110 @@ public class SnapchatFlutterPlugin implements FlutterPlugin, MethodCallHandler,
 		}
 		else if (call.method.equals("snap_chat_login")) {
 			this._result = result;
-			SnapLogin.getLoginStateController(_context).addOnLoginStateChangedListener(this);
-			SnapLogin.getAuthTokenManager(_context).startTokenGrant();
+			_snapLogin.startTokenGrant(this);
 		}
 		else if (call.method.equals("get_access_token")) {
-			getAccessToken(result);
+			this._result = result;
+			getAccessToken();
 		}
 		else if (call.method.equals("snap_chat_logout")) {
-			SnapLogin.getLoginStateController(_context).removeOnLoginStateChangedListener(this);
-			SnapLogin.getAuthTokenManager(_context).clearToken();
-			result.success(null);
+			_snapLogin.clearToken();
+			result.success("logout");
 		}
 		else {
 			result.notImplemented();
 		}
 	}
 
-	private void getAccessToken(MethodChannel.Result result) {
-		String accToken = SnapLogin.getAuthTokenManager(_context).getAccessToken();
-		Map<String, Object> data = new HashMap<String, Object>();
-		data.put("token", accToken);
-		result.success(data);
+	private void getAccessToken() {
+		_snapLogin.fetchAccessToken(new AccessTokenResultCallback() {
+			public void onSuccess(@NonNull String accessToken) {
+				Map<String, Object> data = new HashMap<String, Object>();
+				data.put("token", accessToken);
+				if (_result != null) {
+					_result.success(data);
+					_result = null;
+				}
+			}
+
+			public void onFailure(@NonNull AccessTokenException exception) {
+				if (_result != null) {
+					_result.error("400", exception.toString(), null);
+					_result = null;
+				}
+			}
+		});
 	}
 
 	private void fetchUserData() {
-		String query = "{me{displayName,externalId}}";
-		SnapLogin.fetchUserData(_context, query, null, new FetchUserDataCallback() {
+		final UserDataQuery userDataQuery = UserDataQuery.newBuilder()
+				.withDisplayName()
+				.withExternalId()
+				.build();
+
+		// Call the fetch API
+		_snapLogin.fetchUserData(userDataQuery, new UserDataResultCallback() {
 			@Override
-			public void onSuccess(UserDataResponse userDataResponse) {
-				if (userDataResponse == null || userDataResponse.getData() == null) {
+			public void onSuccess(@NonNull UserDataResult userDataResult) {
+				// Handle Success
+				if (userDataResult.getData() == null) {
+					if (_result != null) {
+						_result.error("400", "Error in login", null);
+						_result = null;
+					}
 					return;
 				}
 
-				MeData meData = userDataResponse.getData().getMe();
+				MeData meData = userDataResult.getData().getMeData();
 				if (meData == null) {
-					_result.error("400", "Error in login", null);
+					if (_result != null) {
+						_result.error("400", "Error in login", null);
+						_result = null;
+					}
 					return;
 				}
 				Map<String, Object> data = new HashMap<String, Object>();
 				data.put("fullName", meData.getDisplayName());
 				data.put("_id", meData.getExternalId());
-				if (meData.getBitmojiData() != null) {
-					if (!TextUtils.isEmpty(meData.getBitmojiData().getAvatar())) {
-						data.put("avatar", meData.getBitmojiData().getAvatar());
-					}
+				if (_result != null) {
+					_result.success(data);
+					_result = null;
 				}
-				_result.success(data);
-
 			}
 
 			@Override
-			public void onFailure(boolean isNetworkError, int statusCode) {
-				_result.error("400", "Error in login", null);
+			public void onFailure(@NonNull UserDataException exception) {
+				if (_result != null) {
+					_result.error("400", exception.toString(), null);
+					_result = null;
+				}
 			}
 		});
 	}
 
 	@Override
-	public void onLoginSucceeded() {
+	public void onStart() {
+		Log.d(CHANNEL, "Snapchat login started");
+	}
+
+	@Override
+	public void onSuccess(@NonNull String accessToken) {
+		Log.d(CHANNEL, "Snapchat login success");
 		fetchUserData();
 	}
 
 	@Override
-	public void onLoginFailed() {
-		_result.error("400", "Error in login", null);
+	public void onFailure(@NonNull LoginException exception) {
+		Log.d(CHANNEL, "Snapchat login failure");
+		if (_result != null) {
+			_result.error("400", exception.toString(), null);
+			_result = null;
+		}
 	}
 
 	@Override
 	public void onLogout() {
-		_result.success("logout");
+		Log.d(CHANNEL, "Snapchat logout");
 	}
 
 }

@@ -1,1 +1,8 @@
 rootProject.name = 'snapchat_flutter_plugin'
+
+dependencyResolutionManagement {
+	repositories {
+		google()
+		mavenCentral()
+	}
+}
